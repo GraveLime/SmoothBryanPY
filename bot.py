@@ -71,6 +71,7 @@ async def on_message(message):
             else:
                 await add_banned_word(message, cmd[1])
         elif '?leave' in message.content:
+            await send(message, 'Goodbye!')
             await client.close()
         elif '?commands' in message.content or '?help' in message.content:
             await send(message, 'The available commands are as follows:')
@@ -83,12 +84,14 @@ async def on_message(message):
 async def send(message, string):
     await message.channel.send(string)
     
+    #adds a word to a banned list
 async def add_banned_word(message,string):
     global WORDS,BANNED_WORDS
     with open('banned-words.txt', mode='r+') as file:
         WORDS += ','+ string
         file.write(WORDS)
     BANNED_WORDS = WORDS.split(",")
+    await send(message,"[" + string + "] has been added as a banned word")
     
     
     #method for grabbing images from reddit
@@ -213,6 +216,7 @@ async def google(message, string):
     for i in range(5):
         print(bestURLs[i].get_property("href"))
         await send(message,bestURLs[i].get_property("href"))
+    await send(message, 'Enjoy!')
     #checks to see if a string can be converted into an integer
 async def RepresentsInt(s):
     #tries to convert string into integer

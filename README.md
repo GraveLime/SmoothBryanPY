@@ -6,6 +6,13 @@ The ability to pull a number of images from Imgur given a specific tag to pull f
 The ability to pull a number of images from Reddit given a specific subreddit to pull from.
 The ability to parrot the user given a flag 
 
+# Required packages
+    Python 3
+	Selenium
+	Discord.py
+	chrome version 75.0.3770.80
+	
+
 ## Setup Instructions
 Following the instructions below create your bot up to the point where you get your token
 [https://www.digitaltrends.com/gaming/how-to-make-a-discord-bot/](https://www.digitaltrends.com/gaming/how-to-make-a-discord-bot/)

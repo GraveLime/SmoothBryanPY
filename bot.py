@@ -5,7 +5,7 @@ import csv
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-TOKEN = ''
+TOKEN = 'PLACE TOKEN HERE'
 #instantiates a discord client which our bot can run on
 client = discord.Client()
 #path to the chrome driver executable
@@ -37,11 +37,11 @@ async def on_message(message):
         return
     #checks to be sure there are no bad words in the message
     if any(BAD_WORD in message.content.lower() for BAD_WORD in BANNED_WORDS):
-        flag = True 
+        flag = True
     #if there is a bad word remove the message and warn the user.
     if flag:
         await message.delete()
-        print("User: " + str(message.author)+ " has said a banned word")
+        print('User: ' + str(message.author)+ ' has said: "' + message.content+'"')
         await send(message, 'You @' + str(message.author) + " have said a banned word. no. stop it.")\
     #if no bad words are detected check for commands
     elif message.content.startswith('?'):

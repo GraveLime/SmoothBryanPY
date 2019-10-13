@@ -5,12 +5,19 @@ import csv
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-#the token for the bot
-TOKEN = 'NjMyNjkxOTcwMDk5MjQ5MTUz.XaJHyQ.6CzlRLn6fm-6hw-GfEEquo5f3mU'
+TOKEN = ''
 #instantiates a discord client which our bot can run on
 client = discord.Client()
 #path to the chrome driver executable
 CHROME_PATH = os.path.dirname(os.path.realpath(__file__))+"//chromedriver.exe"
+#banned words list
+BANNED_WORDS = ''
+WORDS = ''
+#opens the banned words file and reads it in
+with open('banned-words.txt', mode='r+') as file:
+     WORDS= file.readline()
+     BANNED_WORDS = WORDS.split(",")
+     print("The banned words are: "+str(BANNED_WORDS))
 
     #the event that fires when the bot is fully booted
 @client.event
@@ -21,10 +28,23 @@ async def on_ready():
     #the event that fires every time a message is sent in discord
 @client.event
 async def on_message(message):
+    #imports the global banned words
+    global BANNED_WORDS
+    #gives the flag a default value of False
+    flag = False
+    #checks to be sure that its not a message from the bot itself
     if message.author == client.user:
         return
-    
-    if message.content.startswith('?'):
+    #checks to be sure there are no bad words in the message
+    if any(BAD_WORD in message.content.lower() for BAD_WORD in BANNED_WORDS):
+        flag = True 
+    #if there is a bad word remove the message and warn the user.
+    if flag:
+        await message.delete()
+        print("User: " + str(message.author)+ " has said a banned word")
+        await send(message, 'You @' + str(message.author) + " have said a banned word. no. stop it.")\
+    #if no bad words are detected check for commands
+    elif message.content.startswith('?'):
         cmd = message.content.split(' ', 1)
         if '?ping' in message.content:
             await send(message, 'Pong!')
@@ -40,6 +60,16 @@ async def on_message(message):
                 await send(message, 'please give a number of memes')
             else:
                 await imgur(message, cmd[1])
+        elif '?google' in message.content:
+            if len(cmd) <2:
+                await send(message, 'please give me something to search')
+            else:
+                await google(message, cmd[1])
+        elif '?add-banned-word' in message.content:
+            if len(cmd) <2:
+                await send(message, 'give me a word to add to the banned list')
+            else:
+                await add_banned_word(message, cmd[1])
         elif '?leave' in message.content:
             await client.close()
         elif '?commands' in message.content or '?help' in message.content:
@@ -47,11 +77,19 @@ async def on_message(message):
             await send(message, '?ping - returns a pong!')
             await send(message, '?reddit - returns memes from a given subreddit')
             await send(message, '?imgur - returns memes from a given tag')
-            
-            
+            await send(message, '?google - will return the top 5 google results for a search')
+            await send(message, '?add-banned-word - will add a banned word to the list') 
     #method for sending messages into discord
 async def send(message, string):
     await message.channel.send(string)
+    
+async def add_banned_word(message,string):
+    global WORDS,BANNED_WORDS
+    with open('banned-words.txt', mode='r+') as file:
+        WORDS += ','+ string
+        file.write(WORDS)
+    BANNED_WORDS = WORDS.split(",")
+    
     
     #method for grabbing images from reddit
 async def reddit(message, string):
@@ -153,6 +191,28 @@ async def imgur(message, string):
     #end of memes signalling message
     await send(message, "Your dank memes Sir/Madam")
     
+    
+async def google(message, string):
+    
+    chrome_options = Options()
+    #adds an argument to run chrome in headless mode
+    chrome_options.add_argument("--headless")
+    #creates a webdriver given the previous options
+    driver = webdriver.Chrome(CHROME_PATH, options=chrome_options)
+    #tells the driver to open imgur
+    driver.get("https://www.google.com")
+    #finds the search bar at the top
+    searchbar = driver.find_element_by_name("q")
+    #sends the topic to the search bar
+    searchbar.send_keys(string)
+    #presses enter to begin our search
+    searchbar.send_keys(Keys.RETURN)
+    #pulls the URLS
+    bestURLs = driver.find_elements_by_partial_link_text('https://')
+    #prints out the top 5 results
+    for i in range(5):
+        print(bestURLs[i].get_property("href"))
+        await send(message,bestURLs[i].get_property("href"))
     #checks to see if a string can be converted into an integer
 async def RepresentsInt(s):
     #tries to convert string into integer

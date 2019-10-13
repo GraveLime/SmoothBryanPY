@@ -4,7 +4,8 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-
+#the token for the bot
+TOKEN = 'NjMyNjkxOTcwMDk5MjQ5MTUz.XaJHyQ.6CzlRLn6fm-6hw-GfEEquo5f3mU'
 #instantiates a discord client which our bot can run on
 client = discord.Client()
 #path to the chrome driver executable
@@ -38,11 +39,13 @@ async def on_message(message):
                 await send(message, 'please give a number of memes')
             else:
                 await imgur(message, cmd[1])
-        elif '?die' in message.content:
+        elif '?leave' in message.content:
             await client.close()
         elif '?commands' in message.content or '?help' in message.content:
-            await send(message, 'The available commands are ?ping: to recieve a pong, ?say: to have smooth bryan parrot you, ?reddit: to ask bryan to go and find memes from a specific subredit, example ?memes 10 dankmemes will give you the top ten dankmemes on r/dankmemes')
-                
+            await send(message, 'The available commands are as follows:')
+            await send(message, '?ping - returns a pong!')
+            await send(message, '?reddit - returns memes from a given subreddit')
+            await send(message, '?imgur - returns memes from a given tag')
             
             
     #method for sending messages into discord
@@ -101,7 +104,7 @@ async def reddit(message, string):
         #calls the async method send with the link string to be posted in discord
         await send(message,curated[i].get_property("href"))
     #ending of meme posting signal
-    await send(message, "Your dank memes sir/madam")
+    await send(message, "Your dank memes Sir/Madam")
     
     #Method for grabbing images from imgur
 async def imgur(message, string):
@@ -147,7 +150,7 @@ async def imgur(message, string):
         #sends the links into discord
         await send(message,images[i].get_property("href"))
     #end of memes signalling message
-    await send(message, "Your dank memes sir/madam")
+    await send(message, "Your dank memes Sir/Madam")
     
     #checks to see if a string can be converted into an integer
 async def RepresentsInt(s):
@@ -162,4 +165,4 @@ async def RepresentsInt(s):
         #returns false when the above exception is trigered
         return False
 #runs the client using a token so it knows where to connect
-client.run('NjMyNjkxOTcwMDk5MjQ5MTUz.XaJHyQ.6CzlRLn6fm-6hw-GfEEquo5f3mU')
+client.run(TOKEN)

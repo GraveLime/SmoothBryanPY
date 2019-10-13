@@ -5,7 +5,7 @@ import csv
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-TOKEN = 'PLACE TOKEN HERE'
+TOKEN = ''
 #instantiates a discord client which our bot can run on
 client = discord.Client()
 #path to the chrome driver executable
@@ -157,7 +157,7 @@ async def imgur(message, string):
         #assigns default value to number of itterations required
         val = 1
         #takes all of the args and combines them back for the topic
-        topic = newstring[0]+ " " + newstring[1]
+        topic = newstring[0]
     #checks if the length of the newstring is greater than one
     elif len(newstring) >1:
         #assigns the first arg to val
